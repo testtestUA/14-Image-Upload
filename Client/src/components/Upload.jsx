@@ -4,7 +4,8 @@ import axios from 'axios';
 import './Upload.scss';
 const Upload = () => {
   const { file, setFile } = useContext(UploadState);
-  const fileRef = useRef();
+  const fileRefDrag = useRef();
+  const fileRefClick = useRef();
 
   const uploadImage = async (image) => {
     try {
@@ -12,14 +13,14 @@ const Upload = () => {
       data.append('image', image);
       const post = await axios.post('/image/upload', data);
       const imageLink = post.data;
+      console.log(imageLink);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const formHandler = (e) => {
-    e.preventDefault();
-    const image = e.target.image.files[0];
+  const formHandler = (ref) => {
+    const image = ref.current.files[0];
     if (!image) return;
     uploadImage(image);
   };
@@ -31,7 +32,8 @@ const Upload = () => {
       <div className='upload-dragzone'>
         <input
           onClick={(e) => e.preventDefault()}
-          ref={fileRef}
+          onChange={() => formHandler(fileRefDrag)}
+          ref={fileRefDrag}
           id='file'
           type='file'
           name='image'
@@ -43,15 +45,19 @@ const Upload = () => {
         </figcaption>
       </div>
       <p className='upload-text1'>Or</p>
-      <button onClick={() => fileRef.current.click()} className='upload-button'>
+      <button
+        onClick={() => fileRefClick.current.click()}
+        className='upload-button'
+      >
         Choose a file
       </button>
       <input
-        ref={fileRef}
+        onChange={() => formHandler(fileRefClick)}
+        ref={fileRefClick}
         id='file'
         type='file'
         name='image'
-        style={{ display: 'none' }}
+        style={{ opacity: '0' }}
       />
     </section>
   );
