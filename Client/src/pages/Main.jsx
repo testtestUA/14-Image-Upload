@@ -1,18 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Upload from '../components/Upload';
 import Loader from '../components/Loader';
 import Success from '../components/Success';
+import { UploadState } from '../context/UploadContext';
 import './Main.scss';
 
 const Main = () => {
+  const { status } = useContext(UploadState);
+
+  const uploadFlow = () => {
+    switch (status.flow) {
+      case 'loading':
+        return <Loader />;
+      case 'success':
+        return <Success />;
+      default:
+        return <Upload />;
+    }
+  };
+
   return (
-    <main id='main'>
-      <article id='main-article'>
-        <Upload />
-        <Loader />
-        <Success />
-      </article>
-    </main>
+    <>
+      <main id='main'>
+        <article id='main-article'>{uploadFlow()}</article>
+      </main>
+      <footer>created by iCode-Cat - devChallenges.io</footer>
+    </>
   );
 };
 

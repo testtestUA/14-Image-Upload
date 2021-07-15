@@ -21,7 +21,13 @@ router.get('/', (req, res) => {
 router.post('/', upload.single('image'), (req, res) => {
   try {
     const fileName = req.file.filename;
+    const mimetype = req.file.mimetype;
     const hostName = req.headers.host;
+    if (!mimetype.includes('image')) {
+      return res
+        .status(404)
+        .json({ error: { msg: 'Only image, data type is not supported.' } });
+    }
     // Send image link on success;
     res.status(200).send(hostName + '/image/' + fileName);
   } catch (error) {
